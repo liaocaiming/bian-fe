@@ -72,7 +72,7 @@ module.exports = options => {
       index: [utils.resolve(`src/${name}/index.tsx`)],
     },
     output: {
-      filename: 'js/[name].[hash].js',
+      filename: '[name].[hash].js',
       path: utils.resolve(`dist/${name}`),
     },
 
