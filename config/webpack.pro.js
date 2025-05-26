@@ -8,10 +8,10 @@ const program = require('commander');
 const inquirer = require('inquirer');
 const Prompt = require('./prompt');
 
-// const yargs = require('yargs').argv;
+const yargs = require('yargs').argv;
 const utils = require('./utils/utils.js');
 
-// const { name = 'hTrade', company = 'hTrade' } = yargs;
+const { name = 'hTrade', company = 'hTrade' } = yargs;
 
 const proConfig = {
   mode: 'production',
@@ -19,7 +19,7 @@ const proConfig = {
 };
 
 const plugin = [
-  new cleanWebpackPlugin(utils.resolve('docs'), {
+  new cleanWebpackPlugin(utils.resolve(`docs/${name}`), {
     root: process.cwd(),
     verbose: true,
   }),
@@ -63,18 +63,18 @@ function build(options) {
       return;
     }
 
-    compressing.zip
-      .compressDir(
-        utils.resolve(`docs/${name}`),
-        utils.resolve(`docs/${zipName}`),
-      )
-      .then(() => {
-        console.log(chalk.yellow(`Tip: 文件压缩成功，已压缩至【${zipName}】`));
-      })
-      .catch(err => {
-        console.log(chalk.red('Tip: 压缩报错'));
-        console.error(err);
-      });
+    // compressing.zip
+    //   .compressDir(
+    //     utils.resolve(`docs/${name}`),
+    //     utils.resolve(`docs/${zipName}`),
+    //   )
+    //   .then(() => {
+    //     console.log(chalk.yellow(`Tip: 文件压缩成功，已压缩至【${zipName}】`));
+    //   })
+    //   .catch(err => {
+    //     console.log(chalk.red('Tip: 压缩报错'));
+    //     console.error(err);
+    //   });
   });
 }
 
