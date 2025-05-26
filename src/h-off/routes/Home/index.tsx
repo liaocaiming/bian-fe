@@ -28,6 +28,7 @@ import { fetch } from '@utils/index'
 
 import { message, Modal } from 'antd';
 
+declare const QRCode: any;
 import '@utils/lib/qrcode';
 
 
@@ -70,10 +71,10 @@ const navs = [
 ]
 
 interface IRefs {
-  home?: any;
-  system?: any;
-  advance?: any;
-  buy?: any;
+  home: React.RefObject<HTMLDivElement>;
+  system: React.RefObject<HTMLDivElement>;
+  advance: React.RefObject<HTMLDivElement>;
+  buy: React.RefObject<HTMLDivElement>;
 }
 
 export default memo((props: IProps) => {
@@ -82,11 +83,12 @@ export default memo((props: IProps) => {
     qrUrl: ''
   })
 
-  const refs: IRefs = {};
-  navs.forEach((item) => {
-    refs[item.name] = useRef(null);
-  })
-
+  const refs: IRefs = {
+    home: useRef<HTMLDivElement>(null),
+    system: useRef<HTMLDivElement>(null),
+    advance: useRef<HTMLDivElement>(null),
+    buy: useRef<HTMLDivElement>(null)
+  };
 
   const [show, setShow] = useState(false);
 
@@ -100,49 +102,60 @@ export default memo((props: IProps) => {
   }
 
   const getData = async () => {
-    const res = await fetch.get(api.system_settings)
-    console.log(res, 'res');
-    const { data = [] } = res;
-    let host = '';
-    let apiUrl = '';
-    data.forEach((it) => {
-      if (it.key === "lastest_version_url") {
-        apiUrl = it.url
+    try {
+      const res = await fetch.get(api.system_settings)
+      const { data = [] } = res;
+      let host = '';
+      let apiUrl = '';
+      data.forEach((it) => {
+        if (it.key === "lastest_version_url") {
+          apiUrl = it.url
+        }
+        if (it.key === "host") {
+          host = it.value
+        }
+      })
+
+      if (!host || !apiUrl) {
+        message.error('获取下载地址失败，请稍后重试');
+        return;
       }
-      if (it.key === "host") {
-        host = it.value
+
+      const downUrl: string = `${host}${apiUrl}`
+
+      setInfo({
+        qrUrl: '',
+        downUrl
+      })
+
+      const dom = document.getElementById('qrCode');
+      const qrDom = document.getElementById('headerQrcode');
+
+      if (!dom || !qrDom) {
+        message.error('生成二维码失败，请刷新页面重试');
+        return;
       }
-    })
 
-    const downUrl: string = `${host}${apiUrl}`
+      new QRCode(dom, {
+        text: downUrl,
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
 
-    setInfo({
-      qrUrl: '',
-      downUrl
-    })
-
-    const dom = document.getElementById('qrCode');
-
-    const qrDom = document.getElementById('headerQrcode');
-
-    new QRCode(dom, {
-      text: downUrl,
-      width: 150,
-      height: 150,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-
-    new QRCode(qrDom, {
-      text: downUrl,
-      width: 200,
-      height: 200,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-
+      new QRCode(qrDom, {
+        text: downUrl,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch (error) {
+      message.error('系统错误，请稍后重试');
+    }
   }
 
 
