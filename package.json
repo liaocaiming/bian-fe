@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./config/webpack.dev.js",
-    "build": "node ./config/webpack.pro.js",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && node ./config/webpack.dev.js",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && node ./config/webpack.pro.js",
     "tcm": "tcm src",
     "upload": "gulp",
     "deploy": "yarn upload"
@@ -51,6 +51,7 @@
     "react-beautiful-dnd": "^11.0.0",
     "react-dom": "^16.4.1",
     "react-grid-layout": "^0.16.6",
+    "react-quill": "^2.0.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-config": "^5.1.1",
